@@ -55,11 +55,66 @@ class _HomePageState extends State<HomePage> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return ColorfulSafeArea(
-      color: Colors.white,
+      color: Colors.cyan.shade100,
       child: Scaffold(
+        backgroundColor: Colors.cyan.shade100,
+        appBar: isLoading
+          ? null
+          : (imageFile == null)
+            ? null
+            : AppBar(
+              backgroundColor: Colors.cyan.shade100,
+              toolbarHeight: screenHeight * 0.1,
+              actions: [
+                Container(
+                  margin: EdgeInsets.all(screenWidth * 0.03),
+                  height: screenHeight * 0.07,
+                  width: screenHeight * 0.07,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(screenWidth)
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(context, MaterialPageRoute(
+                        builder: (context) => const HomePage() // Go back to home page when clicked
+                      ));
+                    },
+                    icon: Icon(
+                      Icons.home,
+                      color: Colors.brown,
+                      size: screenWidth * 0.07
+                    )
+                  )
+                )
+              ]
+            ),
         body: isLoading
-          ? const Center(
-            child: CircularProgressIndicator()
+          ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "UPLOADING IMAGE",
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.04,
+                    color: Colors.brown,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 1
+                  )
+                ),
+                SizedBox(
+                  height: screenHeight * 0.025
+                ),
+                
+                // Loading screen indicator
+                CircularProgressIndicator(
+                  color: Colors.brown,
+                  backgroundColor: Colors.cyan.shade100,
+                  strokeWidth: screenWidth * 0.01,
+                )
+              ]
+            )
           )
           : (imageFile == null)
             ? Center(
@@ -71,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                     icon: Icon(
                       CupertinoIcons.photo,
                       size: screenHeight * 0.1,
-                      color: Colors.grey
+                      color: Colors.brown
                     )
                   ),
                   SizedBox(
@@ -82,7 +137,7 @@ class _HomePageState extends State<HomePage> {
                     width: screenWidth * 0.7,
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: Colors.grey
+                        color: Colors.brown
                       )
                     ),
                     alignment: Alignment.center,
@@ -90,7 +145,7 @@ class _HomePageState extends State<HomePage> {
                       "GALLERY FACE DETECT",
                       style: TextStyle(
                         fontSize: screenWidth * 0.045,
-                        color: Colors.black54,
+                        color: Colors.brown,
                         fontWeight: FontWeight.w500,
                         letterSpacing: 1
                       )
