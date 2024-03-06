@@ -6,6 +6,7 @@ import 'package:gallery_face_detect/painters/face_painter.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'dart:ui' as ui;
 import 'package:image_picker/image_picker.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -55,105 +56,70 @@ class _HomePageState extends State<HomePage> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return ColorfulSafeArea(
-      color: Colors.cyan.shade100,
+      color: isLoading
+        ? Colors.white
+        : Colors.cyan,
       child: Scaffold(
-        backgroundColor: Colors.cyan.shade100,
+        backgroundColor: Colors.white,
         appBar: isLoading
-          ? null
+          ? null // No app bar for loading page
           : (imageFile == null)
-            ? null
-            : AppBar(
-              backgroundColor: Colors.cyan.shade100,
-              toolbarHeight: screenHeight * 0.1,
-              actions: [
-                Container(
-                  margin: EdgeInsets.all(screenWidth * 0.03),
-                  height: screenHeight * 0.07,
-                  width: screenHeight * 0.07,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(screenWidth)
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.pushReplacement(context, MaterialPageRoute(
-                        builder: (context) => const HomePage() // Go back to home page when clicked
-                      ));
-                    },
-                    icon: Icon(
-                      Icons.home,
-                      color: Colors.brown,
-                      size: screenWidth * 0.07
-                    )
-                  )
+            // App bar when no image selected yet
+            ? AppBar(
+              backgroundColor: Colors.cyan,
+              toolbarHeight: screenHeight * 0.07,
+              title: Text(
+                "GALLERY FACE DETECT",
+                style: TextStyle(
+                  fontSize: screenWidth * 0.045,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 3
                 )
-              ]
+              ),
+              centerTitle: true
+            )
+
+            // App bar with the processed image
+            : AppBar(
+              backgroundColor: Colors.cyan,
+              toolbarHeight: screenHeight * 0.07,
+              leading: IconButton(
+                onPressed: () {
+                  Navigator.pushReplacement(context, MaterialPageRoute(
+                    builder: (context) => const HomePage() // Go back to home page when clicked
+                  ));
+                },
+                icon: Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.white,
+                  size: screenWidth * 0.05
+                )
+              )
             ),
         body: isLoading
+          // Page during image processing
           ? Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "UPLOADING IMAGE",
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.04,
-                    color: Colors.brown,
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 1
-                  )
-                ),
-                SizedBox(
-                  height: screenHeight * 0.025
-                ),
-                
-                // Loading screen indicator
-                CircularProgressIndicator(
-                  color: Colors.brown,
-                  backgroundColor: Colors.cyan.shade100,
-                  strokeWidth: screenWidth * 0.01,
-                )
-              ]
+            // Loading screen indicator
+            child: LoadingAnimationWidget.hexagonDots(
+              color: Colors.cyan.shade500,
+              size: screenHeight * 0.07
             )
           )
           : (imageFile == null)
+            // Page for uploading an image from gallery
             ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: () => getGallery(),
-                    icon: Icon(
-                      CupertinoIcons.photo,
-                      size: screenHeight * 0.1,
-                      color: Colors.brown
-                    )
-                  ),
-                  SizedBox(
-                    height: screenHeight * 0.05
-                  ),
-                  Container(
-                    height: screenHeight * 0.07,
-                    width: screenWidth * 0.7,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.brown
-                      )
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      "GALLERY FACE DETECT",
-                      style: TextStyle(
-                        fontSize: screenWidth * 0.045,
-                        color: Colors.brown,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1
-                      )
-                    )
-                  )
-                ]
+              child: IconButton(
+                onPressed: () => getGallery(),
+                icon: Icon(
+                  CupertinoIcons.photo,
+                  size: screenHeight * 0.1,
+                  color: Colors.grey
+                )
               )
             )
+
+            // Page for displaying the result of uploaded image
             : Center(
               child: FittedBox(
                 child: SizedBox(
